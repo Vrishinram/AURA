@@ -29,6 +29,74 @@ The **AURA AI Safety Red Team Agent** is a defensive security and compliance tes
 
 ## 🏛️ System Architecture
 
+Detailed architectural documentation, dataflow sequence diagrams, and formal state machines are documented in [**docs/ARCHITECTURE.md**](docs/ARCHITECTURE.md).
+
+```
++===================================================================================================+
+|                                    AURA SYSTEM ARCHITECTURE                                       |
++===================================================================================================+
+
+   +-------------------------+       +-------------------------+       +------------------------+
+   |  Config & Environment   |       | Defensive Strategy Lib  |       | Baseline Benchmark Run |
+   |  (Pydantic Settings)    |       | (5 Defensive Taxonomies)|       |  (Historical JSON/CSV) |
+   +------------+------------+       +------------+------------+       +-----------+------------+
+                |                                 |                                |
+                v                                 v                                v
++===================================================================================================+
+|                                        ORCHESTRATION LAYER                                        |
+|                                                                                                   |
+|  +---------------------------------------------------------------------------------------------+  |
+|  |                             SafetyRedTeamAgent (Evaluation Loop)                            |  |
+|  |  - Dispatches Single/Multi-Turn Safety Probes                                               |  |
+|  |  - Maintains Multi-Turn Conversation History (ChatMessage sequences)                        |  |
+|  |  - Collects Token Usage & Latency Benchmarks                                                |  |
+|  +---------------------------------------------------------------------------------------------+  |
++==============================================+====================================================+
+                                               |
+         +-------------------------------------+-------------------------------------+
+         |                                                                           |
+         v                                                                           v
++===================================+                       +=======================================+
+|       TARGET ADAPTER LAYER        |                       |       SAFETY CLASSIFIER / JUDGE       |
+|                                   |                       |                                       |
+|  +-----------------------------+  |                       |  +---------------------------------+  |
+|  | BaseTargetAdapter (ABC)     |  |                       |  | Heuristic Rule Matcher          |  |
+|  +--------------+--------------+  |                       |  | - Refusal Signature Scanner     |  |
+|                 |                 |                       |  | - Canary Token Secret Detector  |  |
+|    +------------+------------+    |                       |  | - Violation Keyword Red Flags   |  |
+|    |            |            |    |                       |  +----------------+----------------+  |
+|    v            v            v    |                       |                   |                   |
+| [Gemini]    [OpenAI]      [Mock]  |                       |                   v                   |
+| Adapter     /Groq/Ollama  Adapter |                       |  +---------------------------------+  |
+| (API Client)(API Client)  (CI Lab)|                       |  | LLM-as-a-Judge Rubric Parser    |  |
+|                                   |                       |  | (Structured JSON Classification)|  |
+|                                   |                       |  +----------------+----------------+  |
++===================================+                       +===================+===================+
+                                                                                |
+                                                                                v
++===================================================================================================+
+|                                    PERSISTENCE & REGRESSION LAYER                                 |
+|                                                                                                   |
+|  +--------------------------------------------+    +-------------------------------------------+  |
+|  | PersistenceEngine                          |    | RegressionEngine                          |  |
+|  | - Aggregates Run Metrics (0-100% Score)    |    | - Baseline vs Candidate Comparative Diff  |  |
+|  | - Serializes JSON & CSV Reports to Runs/   |    | - Categorizes REGRESSED, IMPROVED, UNCHG  |  |
+|  +--------------------------------------------+    +-------------------------------------------+  |
++===================================================================================================+
+                                                |
+                                                v
++===================================================================================================+
+|                                     PRESENTATION & USER INTERFACES                                |
+|                                                                                                   |
+|   +---------------------------------------+       +--------------------------------------------+  |
+|   | Rich Terminal CLI (Typer / Rich)      |       | Modern Cyber Web UI (FastAPI + JS SPA)     |  |
+|   | - aura-safety run                     |       | - Real-Time Test Runner & Live Logs        |  |
+|   | - aura-safety compare                 |       | - Interactive Radial Safety Gauge          |  |
+|   | - aura-safety list-strategies         |       | - Turn-by-Turn Probe Trajectory Modal      |  |
+|   +---------------------------------------+       +--------------------------------------------+  |
++===================================================================================================+
+```
+
 ```mermaid
 flowchart TD
     subgraph Config & Inputs
@@ -54,7 +122,7 @@ flowchart TD
     subgraph Outputs & Artifacts
         REPORTS[JSON & CSV Run Reports]
         CONSOLE[Rich Terminal Summary]
-        DASH[Streamlit Dashboard]
+        DASH[Modern Cyber Web UI]
     end
 
     CLI --> LOOP
