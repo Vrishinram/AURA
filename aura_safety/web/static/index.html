@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA | Autonomous AI Safety Red Team Platform</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons & Chart.js -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <!-- Ambient Cyber Background Glow Elements -->
+  <div class="cyber-bg-glow glow-top-left"></div>
+  <div class="cyber-bg-glow glow-bottom-right"></div>
+  <div class="cyber-grid-overlay"></div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i data-lucide="shield-alert"></i>
+          <span class="icon-pulse-ring"></span>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title-row">
+            <h2>AURA</h2>
+            <span class="version-tag">v0.1</span>
+          </div>
+          <span class="brand-sub">AI SAFETY RED TEAM</span>
+        </div>
+      </div>
+
+      <div class="defense-status-card">
+        <div class="status-header">
+          <span class="status-beacon"></span>
+          <span class="status-title">DEFENSE EVALUATION</span>
+        </div>
+        <div class="status-metrics-row">
+          <span>Active Harness</span>
+          <span class="status-mode">CONTINUOUS CI</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="overview">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Executive Overview</span>
+          <span class="nav-badge" id="nav-badge-score">--%</span>
+        </button>
+        <button class="nav-item" data-tab="runner">
+          <i data-lucide="zap"></i>
+          <span>Live Test Runner</span>
+          <span class="nav-live-dot"></span>
+        </button>
+        <button class="nav-item" data-tab="trajectories">
+          <i data-lucide="scan-eye"></i>
+          <span>Probe Trajectories</span>
+          <span class="nav-badge-count" id="nav-probes-count">0</span>
+        </button>
+        <button class="nav-item" data-tab="regression">
+          <i data-lucide="git-compare"></i>
+          <span>Safety Regression</span>
+        </button>
+        <button class="nav-item" data-tab="strategies">
+          <i data-lucide="layers"></i>
+          <span>Strategy Matrix</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="target-badge">
+          <div class="target-label-row">
+            <span class="target-label">ACTIVE TARGET</span>
+            <span class="target-status-dot"></span>
+          </div>
+          <span class="target-name" id="sidebar-target-name">Gemini / OpenAI / Mock</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <div class="breadcrumb">
+            <span>PLATFORM</span>
+            <i data-lucide="chevron-right"></i>
+            <span class="breadcrumb-current" id="header-breadcrumb">OVERVIEW</span>
+          </div>
+          <h1 id="page-title">Executive Safety Overview</h1>
+          <p id="page-subtitle">Automated policy boundary verification, latent drift analysis & regression tracking</p>
+        </div>
+
+        <div class="header-actions">
+          <div class="run-selector-wrapper">
+            <i data-lucide="database"></i>
+            <select id="run-select" class="custom-select">
+              <option value="">Loading historical runs...</option>
+            </select>
+          </div>
+
+          <button id="btn-export-csv" class="btn btn-secondary btn-icon-only" title="Download CSV Report">
+            <i data-lucide="file-spreadsheet"></i>
+            <span>CSV</span>
+          </button>
+          
+          <button id="btn-export-json" class="btn btn-secondary btn-icon-only" title="Download JSON Artifact">
+            <i data-lucide="file-code"></i>
+            <span>JSON</span>
+          </button>
+
+          <button id="btn-open-runner" class="btn btn-primary btn-glow">
+            <i data-lucide="play-circle"></i>
+            <span>Launch Evaluation</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Scrollable Content Body -->
+      <div class="content-body">
+        
+        <!-- TAB 1: OVERVIEW -->
+        <section id="tab-overview" class="tab-pane active">
+          
+          <!-- Hero Safety Score Gauge & KPI Grid -->
+          <div class="overview-hero-grid">
+            
+            <!-- Radial Safety Dial Card -->
+            <div class="card dial-card">
+              <div class="card-header border-none pb-0">
+                <span class="card-tag">SYSTEM SAFETY POSTURE</span>
+                <span class="badge badge-safe" id="gauge-alignment-badge">ALIGNED</span>
+              </div>
+              <div class="radial-gauge-container">
+                <svg class="radial-svg" viewBox="0 0 160 160">
+                  <circle class="radial-bg" cx="80" cy="80" r="68"></circle>
+                  <circle class="radial-progress" id="gauge-circle" cx="80" cy="80" r="68" stroke-dasharray="427.25" stroke-dashoffset="0"></circle>
+                </svg>
+                <div class="radial-center-text">
+                  <span class="radial-score-val" id="radial-score-val">100%</span>
+                  <span class="radial-score-lbl">SAFETY SCORE</span>
+                </div>
+              </div>
+              <div class="dial-caption text-center" id="dial-caption-text">
+                Target model successfully refused 100% of policy boundary probes.
+              </div>
+            </div>
+
+            <!-- 4 Key Stat Metric Cards -->
+            <div class="kpi-mini-grid">
+              
+              <div class="kpi-card card-hover-tilt">
+                <div class="kpi-header">
+                  <span class="kpi-title">TOTAL TEST PROBES</span>
+                  <div class="kpi-icon-wrapper icon-crimson-glow">
+                    <i data-lucide="list-checks"></i>
+                  </div>
+                </div>
+                <div class="kpi-value-row">
+                  <span class="kpi-value" id="kpi-total-probes">15</span>
+                  <span class="kpi-subpill">5 STRATEGIES</span>
+                </div>
+                <span class="kpi-caption" id="kpi-target-info">Target: mock-strict_safe</span>
+              </div>
+
+              <div class="kpi-card card-hover-tilt">
+                <div class="kpi-header">
+                  <span class="kpi-title">SAFE REFUSALS</span>
+                  <div class="kpi-icon-wrapper icon-green-glow">
+                    <i data-lucide="shield-check"></i>
+                  </div>
+                </div>
+                <div class="kpi-value-row">
+                  <span class="kpi-value text-green" id="kpi-refused-count">15</span>
+                  <span class="kpi-subpill text-green">POLICY SAFE</span>
+                </div>
+                <span class="kpi-caption">Proper model refusal on restricted prompts</span>
+              </div>
+
+              <div class="kpi-card card-hover-tilt">
+                <div class="kpi-header">
+                  <span class="kpi-title">VIOLATIONS & LEAKAGE</span>
+                  <div class="kpi-icon-wrapper icon-red-glow">
+                    <i data-lucide="alert-triangle"></i>
+                  </div>
+                </div>
+                <div class="kpi-value-row">
+                  <span class="kpi-value text-crimson" id="kpi-violations-count">0</span>
+                  <span class="kpi-subpill text-crimson" id="kpi-violation-pct">0.0% DRIFT</span>
+                </div>
+                <span class="kpi-caption">Safety policy bypasses or canary leakage</span>
+              </div>
+
+              <div class="kpi-card card-hover-tilt">
+                <div class="kpi-header">
+                  <span class="kpi-title">AVERAGE LATENCY</span>
+                  <div class="kpi-icon-wrapper icon-purple-glow">
+                    <i data-lucide="activity"></i>
+                  </div>
+                </div>
+                <div class="kpi-value-row">
+                  <span class="kpi-value" id="kpi-latency">21.0 ms</span>
+                  <span class="kpi-subpill">EVAL & INFERENCE</span>
+                </div>
+                <span class="kpi-caption">Mean roundtrip evaluation response time</span>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Charts Row -->
+          <div class="charts-row">
+            <div class="card chart-card">
+              <div class="card-header">
+                <h3><i data-lucide="bar-chart-3"></i> Strategy Safety Rate Breakdown</h3>
+                <span class="badge badge-outline">Safety Rate (%)</span>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="strategyChart"></canvas>
+              </div>
+            </div>
+
+            <div class="card chart-card">
+              <div class="card-header">
+                <h3><i data-lucide="pie-chart"></i> Outcome Distribution</h3>
+                <span class="badge badge-outline">Total Probes</span>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="outcomeChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Strategy Matrix Table -->
+          <div class="card">
+            <div class="card-header">
+              <h3><i data-lucide="layers"></i> Defensive Strategy Vulnerability Breakdown</h3>
+              <span class="badge badge-info">5 Registered Strategies</span>
+            </div>
+            <div class="table-responsive">
+              <table class="custom-table" id="strategy-summary-table">
+                <thead>
+                  <tr>
+                    <th>Strategy Name</th>
+                    <th>Category</th>
+                    <th>Probes</th>
+                    <th>Safe (Refused)</th>
+                    <th>Non-Compliant</th>
+                    <th>Partial Leak</th>
+                    <th>Safety Rate</th>
+                  </tr>
+                </thead>
+                <tbody id="strategy-table-body">
+                  <tr><td colspan="7" class="text-center">Loading run data...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: LIVE TEST RUNNER -->
+        <section id="tab-runner" class="tab-pane">
+          <div class="runner-grid">
+            
+            <!-- Runner Config Card -->
+            <div class="card runner-config-card">
+              <div class="card-header">
+                <h3><i data-lucide="sliders"></i> Launch Safety Red Team Suite</h3>
+                <span class="badge badge-info">DEFENSIVE EVAL</span>
+              </div>
+
+              <!-- Quick Presets -->
+              <div class="presets-row">
+                <span class="presets-label">Quick Presets:</span>
+                <button type="button" class="preset-chip active" id="preset-all">All Strategies</button>
+                <button type="button" class="preset-chip" id="preset-boundary">Boundary & Roles</button>
+                <button type="button" class="preset-chip" id="preset-multiturn">Multi-Turn Only</button>
+                <button type="button" class="preset-chip" id="preset-canary">Canary / Leakage</button>
+              </div>
+              
+              <form id="run-form" class="config-form">
+                <div class="form-group">
+                  <label>Target Provider</label>
+                  <select id="run-target" class="form-input custom-input">
+                    <option value="mock" selected>Mock Adapter (Zero Cost / Deterministic CI)</option>
+                    <option value="gemini">Google Gemini API (gemini-2.5-flash)</option>
+                    <option value="openai">OpenAI / Compatible (GPT-4o, Groq, Ollama, DeepSeek)</option>
+                  </select>
+                </div>
+
+                <div class="form-group" id="mock-mode-group">
+                  <label>Mock Evaluation Behavior</label>
+                  <select id="run-mock-mode" class="form-input custom-input">
+                    <option value="strict_safe">Strict Safe (100% Policy Compliant / Refusal)</option>
+                    <option value="vulnerable">Vulnerable (Fulfills unsafe instructions)</option>
+                    <option value="partial">Partial Leakage (Soft refusal with leakage)</option>
+                    <option value="flaky">Simulate API / Network Error</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Target Model Name Override (Optional)</label>
+                  <input type="text" id="run-model-override" class="form-input custom-input" placeholder="e.g. gemini-2.5-flash or gpt-4o-mini">
+                </div>
+
+                <div class="form-group">
+                  <label>Safety Judge Classifier</label>
+                  <select id="run-judge" class="form-input custom-input">
+                    <option value="heuristic" selected>Rule-Based Heuristic Matcher (Deterministic / Fast)</option>
+                    <option value="gemini">Gemini LLM-as-a-Judge</option>
+                    <option value="openai">OpenAI LLM-as-a-Judge</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <div class="label-with-count">
+                    <label>Select Strategies to Test</label>
+                    <span id="selected-strat-count" class="badge-counter">5 selected</span>
+                  </div>
+                  <div class="checkbox-group custom-scrollbar" id="strategy-checkboxes">
+                    <!-- Dynamic strategy checkboxes -->
+                  </div>
+                </div>
+
+                <button type="submit" id="btn-start-run" class="btn btn-primary btn-block btn-glow">
+                  <i data-lucide="play"></i>
+                  <span>Execute Red Team Suite</span>
+                </button>
+              </form>
+            </div>
+
+            <!-- Runner Execution Live Console -->
+            <div class="card runner-console-card">
+              <div class="card-header">
+                <h3><i data-lucide="terminal"></i> Live Evaluation Execution Stream</h3>
+                <span id="runner-status-pill" class="badge badge-info">IDLE</span>
+              </div>
+              
+              <div class="progress-bar-container">
+                <div class="progress-bar-track">
+                  <div id="runner-progress-fill" class="progress-bar-fill" style="width: 0%;"></div>
+                </div>
+                <div class="progress-labels">
+                  <span id="runner-progress-text">0 / 0 Probes Completed</span>
+                  <span id="runner-progress-pct">0%</span>
+                </div>
+              </div>
+
+              <div class="console-log-box custom-scrollbar" id="console-logs">
+                <div class="log-line dim">AURA Safety Red Team Engine online.</div>
+                <div class="log-line dim">Select target parameters and click 'Execute Red Team Suite' to start probing.</div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- TAB 3: PROBE TRAJECTORIES -->
+        <section id="tab-trajectories" class="tab-pane">
+          <div class="card">
+            <div class="card-header filters-header">
+              <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="text" id="probe-search" placeholder="Search by probe ID, name, prompt, or keywords (e.g. SQL, Canary, Base64)...">
+              </div>
+
+              <div class="filter-controls">
+                <select id="filter-category" class="custom-select">
+                  <option value="ALL">All Categories</option>
+                  <option value="policy_boundary">Policy Boundary</option>
+                  <option value="role_pressure">Role Pressure</option>
+                  <option value="multi_turn_persistence">Multi-Turn Persistence</option>
+                  <option value="obfuscated_instruction">Obfuscated Phrasing</option>
+                  <option value="sensitive_info_handling">Sensitive Info Handling</option>
+                </select>
+
+                <select id="filter-outcome" class="custom-select">
+                  <option value="ALL">All Outcomes</option>
+                  <option value="REFUSED">REFUSED (Safe)</option>
+                  <option value="NON_COMPLIANT">NON_COMPLIANT (Violation)</option>
+                  <option value="PARTIAL">PARTIAL (Leakage)</option>
+                  <option value="ERROR">ERROR</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Quick Status Filter Pills -->
+            <div class="quick-status-pills">
+              <button class="status-pill-chip active" data-filter="ALL">All Probes <span id="chip-count-all">15</span></button>
+              <button class="status-pill-chip chip-safe" data-filter="REFUSED">Safe <span id="chip-count-safe">15</span></button>
+              <button class="status-pill-chip chip-unsafe" data-filter="NON_COMPLIANT">Violations <span id="chip-count-unsafe">0</span></button>
+              <button class="status-pill-chip chip-partial" data-filter="PARTIAL">Partial Leaks <span id="chip-count-partial">0</span></button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="custom-table" id="probes-table">
+                <thead>
+                  <tr>
+                    <th>Probe ID</th>
+                    <th>Probe Name</th>
+                    <th>Strategy</th>
+                    <th>Category</th>
+                    <th>Outcome</th>
+                    <th>Latency</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="probes-table-body">
+                  <tr><td colspan="7" class="text-center">Loading probes...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: SAFETY REGRESSION -->
+        <section id="tab-regression" class="tab-pane">
+          <div class="regression-layout">
+            
+            <div class="card regression-selector-card">
+              <div class="card-header">
+                <h3><i data-lucide="scale"></i> Select Benchmark Runs for Regression Analysis</h3>
+                <span class="badge badge-info">DELTA ENGINE</span>
+              </div>
+              <div class="regression-select-row">
+                <div class="select-col">
+                  <label>Baseline Benchmark Run (Target A - Aligned Baseline)</label>
+                  <select id="reg-baseline-select" class="form-input custom-input"></select>
+                </div>
+                <div class="select-col-arrow">
+                  <i data-lucide="arrow-right"></i>
+                </div>
+                <div class="select-col">
+                  <label>Candidate Run (Target B - Candidate / Quantized / Update)</label>
+                  <select id="reg-candidate-select" class="form-input custom-input"></select>
+                </div>
+                <div class="select-col-btn">
+                  <button id="btn-run-regression" class="btn btn-primary btn-glow">
+                    <i data-lucide="git-pull-request"></i>
+                    <span>Compute Delta Diff</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Regression Delta KPI Cards -->
+            <div class="regression-kpi-row" id="regression-kpis" style="display: none;">
+              <div class="kpi-card card-glow-primary">
+                <div class="kpi-header">
+                  <span class="kpi-title">SAFETY DELTA SCORE</span>
+                  <i data-lucide="trending-up" class="kpi-icon icon-cyan"></i>
+                </div>
+                <div class="kpi-value-row">
+                  <span class="kpi-value" id="reg-delta-score">+0.00%</span>
+                  <span class="kpi-pill" id="reg-status-pill">UNCHANGED</span>
+                </div>
+                <span class="kpi-caption" id="reg-delta-caption">Baseline: --% | Candidate: --%</span>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-header">
+                  <span class="kpi-title">REGRESSED PROBES</span>
+                  <div class="kpi-icon-wrapper icon-red-glow">
+                    <i data-lucide="alert-octagon"></i>
+                  </div>
+                </div>
+                <div class="kpi-value-row">
+                  <span class="kpi-value text-crimson" id="reg-regressed-count">0</span>
+                </div>
+                <span class="kpi-caption">Passed in baseline, violated in candidate</span>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-header">
+                  <span class="kpi-title">IMPROVED PROBES</span>
+                  <div class="kpi-icon-wrapper icon-green-glow">
+                    <i data-lucide="sparkles"></i>
+                  </div>
+                </div>
+                <div class="kpi-value-row">
+                  <span class="kpi-value text-green" id="reg-improved-count">0</span>
+                </div>
+                <span class="kpi-caption">Violated in baseline, fixed in candidate</span>
+              </div>
+            </div>
+
+            <!-- Regression Breakdown Table -->
+            <div class="card" id="regression-table-card" style="display: none;">
+              <div class="card-header">
+                <h3><i data-lucide="git-commit"></i> Per-Probe Status Transition Matrix</h3>
+              </div>
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Probe ID</th>
+                      <th>Probe Name</th>
+                      <th>Strategy</th>
+                      <th>Baseline Outcome</th>
+                      <th>Candidate Outcome</th>
+                      <th>Status Change</th>
+                    </tr>
+                  </thead>
+                  <tbody id="regression-diff-body">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- TAB 5: STRATEGY CATALOG -->
+        <section id="tab-strategies" class="tab-pane">
+          <div class="strategies-header-banner">
+            <div class="banner-text">
+              <h2>🛡️ Defensive Safety Strategy Library</h2>
+              <p>Curated taxonomies of synthetic, policy-aligned prompts probing specific failure modes without hazardous payloads.</p>
+            </div>
+          </div>
+          <div class="strategies-grid" id="strategies-catalog-grid">
+            <!-- Dynamic strategy cards -->
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Trajectory Modal Drawer -->
+  <div class="modal-overlay" id="trajectory-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <div class="modal-badge-row">
+            <span class="badge badge-info" id="modal-probe-id">DIR-001</span>
+            <span class="badge" id="modal-outcome">REFUSED</span>
+          </div>
+          <h3 id="modal-probe-name">Direct Policy Probe</h3>
+        </div>
+        <div class="modal-header-actions">
+          <button class="btn btn-secondary btn-sm" id="btn-copy-trajectory" title="Copy Trajectory">
+            <i data-lucide="copy"></i> Copy Full Log
+          </button>
+          <button class="modal-close" id="btn-close-modal">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-body custom-scrollbar">
+        <div class="modal-meta-grid">
+          <div><strong>Category:</strong> <span id="modal-category">policy_boundary</span></div>
+          <div><strong>Strategy:</strong> <span id="modal-strategy">direct_policy_probe</span></div>
+          <div><strong>Latency:</strong> <span id="modal-latency">15.0 ms</span></div>
+          <div><strong>Safety Verdict:</strong> <span id="modal-verdict" class="text-green">SAFE</span></div>
+        </div>
+
+        <div class="modal-section">
+          <h4><i data-lucide="brain"></i> AI Safety Judge Reasoning & Rubric Evaluation</h4>
+          <div class="judge-box" id="modal-reasoning">Loading reasoning...</div>
+        </div>
+
+        <div class="modal-section">
+          <h4><i data-lucide="message-square"></i> Turn-by-Turn Conversational Trajectory</h4>
+          <div class="trajectory-turns-container" id="modal-turns"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Script -->
+  <script src="app.js"></script>
+</body>
+</html>

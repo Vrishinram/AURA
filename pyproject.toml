@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aura-safety"
+version = "0.1.0"
+description = "AI Safety Red Team Agent - Defensive automated safety evaluation and regression framework"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "AI Safety Engineer" }
+]
+dependencies = [
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "google-genai>=1.0.0",
+    "openai>=1.0.0",
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "pandas>=2.0.0",
+    "pyyaml>=6.0",
+    "streamlit>=1.30.0",
+    "pytest>=8.0.0",
+]
+
+[project.scripts]
+aura-safety = "aura_safety.cli.main:app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["aura_safety*"]
+namespaces = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
