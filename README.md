@@ -161,8 +161,8 @@ flowchart TD
 
 ### 1. Clone & Set Up Environment
 ```bash
-git clone https://github.com/your-username/aura-safety.git
-cd aura-safety
+git clone https://github.com/Vrishinram/AURA.git
+cd AURA
 
 # Create and activate virtual environment
 python -m venv .venv
@@ -171,6 +171,7 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 # Install dependencies
 pip install -e .
 ```
+
 
 ### 2. Configure API Keys
 Copy `.env.example` to `.env`:
