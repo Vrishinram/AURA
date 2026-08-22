@@ -42,3 +42,5 @@ data/runs/*
 .idea/
 .DS_Store
 Thumbs.db
+
+.github/
